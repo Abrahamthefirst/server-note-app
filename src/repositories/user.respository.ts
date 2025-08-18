@@ -5,7 +5,7 @@ import { PrismaClient } from "@prisma/client";
 class UserRepo {
   constructor(private prisma: PrismaClient) {}
   async createUser(
-    data: Required<Pick<User, "email" | "username" | "role">> & Partial<User>
+    data: Required<Pick<User, "email" | "username" >> & Partial<User>
   ): Promise<User> {
     try {
       const userData = await this.prisma.user.create({

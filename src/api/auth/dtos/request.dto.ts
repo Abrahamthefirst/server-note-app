@@ -3,7 +3,6 @@ import { BadRequestError } from "../../../utils/error";
 import { Role } from "../../../generated/prisma";
 import {
   parsePhoneNumberFromString,
-  validatePhoneNumberLength,
   isValidPhoneNumber,
   CountryCode,
 } from "libphonenumber-js";
@@ -25,7 +24,9 @@ const RegistrationSchema = z.strictObject({
   email: z.email("Please enter a valid email address."),
   phone_number: z.string("Please enter a valid phone number").optional(),
   country_code: z.string("").min(2).max(3).optional(),
-  role: z.literal(["EDITOR", "VIEWER", "ADMIN"]),
+  role: z
+    .literal(["EDITOR", "VIEWER", "ADMIN"], { error: "No user role" })
+    .optional(),
 });
 
 export class BasicRegistrationRequestDTO {
@@ -33,7 +34,7 @@ export class BasicRegistrationRequestDTO {
     public username: string,
     public password: string,
     public email: string,
-    public role: Role,
+    public role?: Role,
     public phone_number?: string,
     public country_code?: string
   ) {}
@@ -55,10 +56,12 @@ export class BasicRegistrationRequestDTO {
       }
     }
 
+
     if (result.success) {
       if (result.data && "country_code" in result.data) {
         delete result.data.country_code;
       }
+
       if (!result.data.phone_number) {
         delete result.data.phone_number;
       }

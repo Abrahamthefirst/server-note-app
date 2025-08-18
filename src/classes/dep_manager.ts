@@ -11,22 +11,25 @@ import { IAppConfig } from "../utils/interface";
 import { MailClient, NodemailerClient } from "../config/emailConfig";
 import AuthController from "../api/auth/auth.controller";
 import AccountController from "../api/account/account.controller";
+import DirectoryService from "../modules/directory/directory.service";
+import DirectoryController from "../api/directory/directory.controller";
+import DirectoryRepository from "../repositories/directory.repository";
 import NoteController from "../api/note/note.controller";
 import { EmailWorker } from "../queues/email";
-type Repository = UserRepository | NoteRepository;
-type RepositoryKey = "user" | "note";
+type Repository = UserRepository | NoteRepository | DirectoryRepository;
+type RepositoryKey = "user" | "note" | "directory";
 type Repositories = Record<RepositoryKey, Repository>;
 
-type Service = UserService | NoteService | EmailService | AuthService;
-type ServiceKey = "user" | "email" | "auth" | "note";
+type Service = UserService | NoteService | EmailService | AuthService | DirectoryService;
+type ServiceKey = "user" | "email" | "auth" | "note" | "directory";
 type Services = Record<ServiceKey, Service>;
 
 type QueueWorker = EmailWorker;
 type QueueKey = "email";
 type Queues = Record<QueueKey, QueueWorker>;
 
-type Controller = AuthController | AccountController | NoteController;
-type Controllerkey = "user" | "auth" | "note";
+type Controller = AuthController | AccountController | NoteController | DirectoryController;
+type Controllerkey = "user" | "auth" | "note" | "directory";
 type Controllers = Record<Controllerkey, Controller>;
 // type Controllers =
 export class DependencyManager {
@@ -103,12 +106,14 @@ export class DependencyManager {
     this.repositories = {
       note: new NoteRepository(this.prisma!),
       user: new UserRepository(this.prisma!),
+      directory: new DirectoryRepository(this.prisma),
     };
     this.services = {
       auth: new AuthService(this.getRepository<UserRepository>("user")),
       note: new NoteService(this.getRepository<NoteRepository>("note")),
       email: new EmailService(this.nodeMailerClient()),
       user: new UserService(this.getRepository<UserRepository>("user")),
+      directory: new DirectoryService(this.getRepository<DirectoryRepository>("directory"))
     };
     this.queueWorker = {
       email: new EmailWorker(this.services.email as EmailService),
@@ -117,6 +122,7 @@ export class DependencyManager {
       auth: new AuthController(this.getService<AuthService>("auth")),
       user: new AccountController(this.getService<UserService>("user")),
       note: new NoteController(this.getService<NoteService>("note")),
+      directory: new DirectoryController(this.getService<DirectoryService>("directory"))
     };
   }
 

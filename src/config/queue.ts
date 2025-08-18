@@ -7,6 +7,4 @@ import { Queue } from "bullmq";
 
 export const emailQueue = new Queue("email");
 
-emailQueue.on("waiting", ({ jobId }) => {
-  console.log(`A job with ID ${jobId} is waiting`);
-});
+// emailQueue.on("waiting", ({ jobId }) => {});

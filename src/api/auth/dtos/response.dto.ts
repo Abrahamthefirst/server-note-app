@@ -1,4 +1,3 @@
-import { ValidationResult } from "joi";
 import { Roles } from "../../../types/utilTypes";
 export class BasicRegistrationResponseDTO {
   constructor(

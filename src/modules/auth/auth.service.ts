@@ -15,8 +15,6 @@ import {
   verifyRefreshJwt,
 } from "../../utils/token";
 import { GoneError, BadRequestError, NotFoundError } from "../../utils/error";
-import EmailService from "../email/email.service";
-import { MailClient } from "../../config/emailConfig";
 
 class AuthService {
   constructor(private userRepository: UserRepo) {}
@@ -31,6 +29,7 @@ class AuthService {
       const user = await this.userRepository.createUser({
         ...userDetails,
         hashed_password,
+      
       });
       const refresh_token = generateRefreshJwt({ user });
       const access_token = generateJWT({ id: user.id });
@@ -95,7 +94,7 @@ class AuthService {
       );
 
       if (!isPasswordCorrect) throw new BadRequestError("Password incorrect");
-      
+
       const access_token = generateJWT({ id: user.id });
       const refresh_token = generateRefreshJwt({ email: user.email });
 
@@ -140,7 +139,7 @@ class AuthService {
   }
   async verifyEmail(token: string): Promise<boolean> {
     try {
-      const decoded = verifyAccessJwt(token) as { [key: string]: any };
+      const decoded = verifyAccessJwt(token) as { email: string };
       const user = await this.userRepository.getUserByEmail(decoded.email);
       if (user) {
         this.userRepository.updateUserByEmail({
@@ -202,12 +201,17 @@ class AuthService {
     }
   }
 
-  async getAccessToken(token: string): Promise<any> {
+  async getAccessToken(token: string): Promise<string> {
     try {
-      const user = verifyRefreshJwt(token) as { [key: string]: string };
+      const refreshtToken = verifyRefreshJwt(token) as {
+        [key: string]: string;
+      };
 
-      if (!user) return false;
+      const user = await this.userRepository.getUserByEmail(
+        refreshtToken.email
+      );
 
+      if (!user) throw new BadRequestError("User needs to login");
       return generateJWT({ id: user.id });
     } catch (err) {
       throw err;

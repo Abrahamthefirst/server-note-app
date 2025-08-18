@@ -23,8 +23,7 @@ export class EmailWorker {
             html,
             "Abraham <abrahamprogramming5@gmail.com>"
           );
-          console.log(job);
-          console.log(`Email sent for job ${job.id}`);
+      
         } catch (err) {
           console.log(err);
         }
