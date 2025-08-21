@@ -31,11 +31,11 @@ class DirectoryController {
     try {
       const value = CreateDirectoryDto.validate(req.body);
 
-      const noteToCreate = {
+      const directoryRequestData = {
         ...value,
         userId: req.user?.id,
       };
-      const note = await this.directoryService.createDirectory(noteToCreate);
+      const note = await this.directoryService.createDirectory(directoryRequestData);
 
       res.status(200).json(note);
       return;

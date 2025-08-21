@@ -1,6 +1,7 @@
 import { Note, Directory } from "../generated/prisma";
-
-import { PrismaClient, Prisma } from "@prisma/client";
+import { ConflictError } from "../utils/error";
+import { PrismaClient } from "@prisma/client";
+import { Prisma } from "../generated/prisma";
 interface CreateNoteRepositoryData {
   name: string;
 }
@@ -17,6 +18,11 @@ class DirectoryRepository {
       });
       return newDirectory;
     } catch (err) {
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        if (err?.code === "P2002") {
+          throw new ConflictError("Directory name already exist ");
+        }
+      }
       throw err;
     }
   }
@@ -24,7 +30,7 @@ class DirectoryRepository {
     try {
       const directorites = await this.prisma.directory.findMany({
         where: {
-          id: userId,
+          userId,
         },
       });
       return directorites;

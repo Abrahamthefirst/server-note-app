@@ -16,6 +16,22 @@ export class NotFoundError extends Error {
   }
 }
 
+export class UnauthorizedError extends Error {
+  public status;
+  constructor(public message: string) {
+    super(message);
+    this.message = message;
+    this.status = 401;
+  }
+}
+export class ForbiddenError extends Error {
+  public status;
+  constructor(public message: string) {
+    super(message);
+    this.message = message;
+    this.status = 403;
+  }
+}
 export class BadRequestError extends Error {
   public status;
   constructor(public message: string) {

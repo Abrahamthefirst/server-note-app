@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 
 import passport from "passport";
 import cors from "cors";
+import cookieParser from "cookie-parser"
 import { googleAuthStrategy } from "./middleware/passport";
 import getDefaultConfig from "./config/config";
 import { DependencyManager } from "./classes/dep_manager";
@@ -31,6 +32,7 @@ const startApp = async (dep_man: DependencyManager) => {
   const app = express();
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
+  app.use(cookieParser())
   app.use(cors(dep_man.setUpCors()));
 
   app.use(passport.initialize());

@@ -49,6 +49,7 @@ class AuthController {
           httpOnly: true,
           secure: true,
           sameSite: "none",
+          path: "/",
           maxAge: 24 * 60 * 60 * 1000,
         })
         .json(userDetails);
@@ -144,10 +145,9 @@ class AuthController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const response = await this.authService.getAccessToken(
-        req.cookies.refreshToken
-      );
-      if (response) res.status(200).json({ response });
+      const response = await this.authService.getAccessToken(req.cookies.jwt);
+
+      if (response) res.status(200).json({ access_token: response });
     } catch (err) {
       const error = err as Error;
       if (error.name === "Token Expired Error") {

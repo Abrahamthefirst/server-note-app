@@ -8,6 +8,8 @@ export function createAuthRouter(authController: AuthController) {
   router.post("/signup", authController.signup);
 
   router.post("/login", authController.login);
+  router.post("/login/refresh-token", authController.refreshToken);
+
 
   router.get(
     "/login/google",
@@ -30,7 +32,6 @@ export function createAuthRouter(authController: AuthController) {
 
   router.post("/reset-password", authController.resetPassword);
 
-  router.post("/refresh-token", authController.refreshToken);
 
   router.post("/logout", authController.logout);
   return router;

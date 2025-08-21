@@ -4,6 +4,8 @@ import {
   NotFoundError,
   BadRequestError,
   GoneError,
+  UnauthorizedError,
+  ForbiddenError,
 } from "./error";
 export const errorHandler = (
   err: any,
@@ -13,15 +15,14 @@ export const errorHandler = (
 ) => {
   let message = "Internal server error";
   let statusCode = 500;
-  if (res.statusCode === 404) {
-    message = "Not found";
-  }
 
   if (
     err instanceof ConflictError ||
     err instanceof NotFoundError ||
     err instanceof BadRequestError ||
-    err instanceof GoneError
+    err instanceof GoneError ||
+    err instanceof UnauthorizedError ||
+    ForbiddenError
   ) {
     statusCode = err.status;
     message = err.message;
