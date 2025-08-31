@@ -23,11 +23,7 @@ class DirectoryController {
       next(err);
     }
   };
-  createDirectory = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  createDirectory = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const value = CreateDirectoryDto.validate(req.body);
 
@@ -35,21 +31,18 @@ class DirectoryController {
         ...value,
         userId: req.user?.id,
       };
-      const note = await this.directoryService.createDirectory(directoryRequestData);
+      const note = await this.directoryService.createDirectory(
+        directoryRequestData
+      );
 
       res.status(200).json(note);
       return;
     } catch (err) {
-      console.log(err, " This is note error");
       next(err);
     }
   };
 
-  getDirectory = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  getDirectory = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const directoryId = req.params.directoryId as string;
       const getNote = req.query?.note;
@@ -65,7 +58,16 @@ class DirectoryController {
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void> => {};
+  ): Promise<void> => {
+    try {
+      const directoryId = req.params.id as string;
+      const note = await this.directoryService.deleteDirectory(directoryId);
+      res.status(200).json(note);
+      return;
+    } catch (err) {
+      next(err);
+    }
+  };
   updateNote = async (
     req: Request,
     res: Response,

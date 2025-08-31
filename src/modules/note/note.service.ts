@@ -4,6 +4,7 @@ interface CreateNoteServiceData {
   title: string;
   body: string;
   tagNames?: string[];
+  directoryId?: string
   status: boolean
   userId: string;
 }
@@ -54,8 +55,9 @@ class NoteService {
 
   async deleteNote(id: string): Promise<{ id: string } | null> {
     try {
-      const updatedNote = await this.noteRepository.deleteNoteById(Number(id));
-      return { id: String(updatedNote?.id) };
+
+      const deletedNote = await this.noteRepository.deleteNoteById(id);
+      return { id: String(deletedNote?.id) };
     } catch (err) {
       throw err;
     }

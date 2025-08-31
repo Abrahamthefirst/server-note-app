@@ -1,5 +1,5 @@
 import DirectoryRepository from "../../repositories/directory.repository";
-import { Note } from "../../generated/prisma";
+import { Directory } from "../../generated/prisma";
 interface CreateUserDirectoryType {
   userId: string;
   name: string;
@@ -8,7 +8,7 @@ class DirectoryService {
   constructor(private directoryRepository: DirectoryRepository) {}
   createDirectory = async (
     dto: CreateUserDirectoryType
-  ): Promise<Note | null> => {
+  ): Promise<Directory | null> => {
     try {
       const note = await this.directoryRepository.createDirectory(dto);
       return note;
@@ -38,8 +38,7 @@ class DirectoryService {
     }
   }
 
-
-  //    async getNoteById(id: string): Promise<Note | null> {
+  //    async getNoteById(id: string): Promise<Directory | null> {
   //     try {
   //       const note = await this.directoryRepository.getNoteById(Number(id));
   //       return note;
@@ -48,7 +47,7 @@ class DirectoryService {
   //     }
   //   }
 
-  //   async getAllDirectories(): Promise<Note[] | null> {
+  //   async getAllDirectories(): Promise<Directory[] | null> {
   //     try {
   //       const notes = await this.directoryRepository.getAllNotes();
   //       return notes;
@@ -68,10 +67,8 @@ class DirectoryService {
 
   async deleteDirectory(id: string): Promise<{ id: string } | null> {
     try {
-      const updatedNote = await this.directoryRepository.deleteDirectoryById(
-        Number(id)
-      );
-      return { id: String(updatedNote?.id) };
+      const deletedNote = await this.directoryRepository.deleteDirectoryById(id);
+      return { id: String(deletedNote?.id) };
     } catch (err) {
       throw err;
     }

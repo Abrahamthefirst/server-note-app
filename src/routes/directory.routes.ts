@@ -7,6 +7,7 @@ export function createDirectoryRouter(directoryController: DirectoryController) 
   router.get("/me", directoryController.getUserDirectories);
   router.get("/:id", directoryController.getDirectory);
   router.post("/", directoryController.createDirectory);
+  router.delete("/:id", directoryController.deleteDirectory);
   // router.post("/upload", upload.array("files"), userController.uploadDocuments);
 
   return router;

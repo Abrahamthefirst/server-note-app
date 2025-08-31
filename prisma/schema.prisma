@@ -22,7 +22,7 @@ model User{
   email String @unique
   email_verified Boolean @default(false)
   picture String?
-  phone_number String? @unique
+  phone_number String? 
   refresh_token String?
   role Role? @default(VIEWER)
   directory Directory[]
@@ -48,15 +48,15 @@ model Directory{
 
 
 model Note{
-  id Int  @id @default(autoincrement())
+  id  String  @id @default(uuid())
   title String
   body String
   status Boolean
-  user User @relation(fields: [creatorId], references: [id])
-  folder Directory? @relation(fields: [folderId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+  folder Directory? @relation(fields: [directoryId], references: [id])
   tags Tag[]
-  creatorId String
-  folderId String
+  userId String
+  directoryId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -66,8 +66,8 @@ model Tag{
   id Int  @id @default(autoincrement())
   name String @unique
   notes Note[]
-  user User @relation(fields: [creatorId], references: [id])
-  creatorId String
+  user User @relation(fields: [userId], references: [id])
+  userId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

@@ -6,13 +6,15 @@ interface CreateNoteRepositoryData {
   body: string;
   userId: string;
   status: boolean;
+  directoryId?: string;
   tagNames?: string[];
 }
 class NoteRepo {
   constructor(private prisma: PrismaClient) {}
   async createNote(data: CreateNoteRepositoryData): Promise<Note> {
     try {
-      const { title, body, userId: creatorId, tagNames, status } = data;
+      const { title, body, userId, tagNames, status, directoryId } = data;
+
       const tagConnectOrCreateOperations =
         tagNames?.map((tagName) => ({
           where: { name: tagName },
@@ -20,7 +22,7 @@ class NoteRepo {
             name: tagName,
             user: {
               connect: {
-                id: creatorId,
+                id: userId,
               },
             },
           },
@@ -33,7 +35,12 @@ class NoteRepo {
           status,
           user: {
             connect: {
-              id: creatorId,
+              id: userId,
+            },
+          },
+          folder: {
+            connect: {
+              id: directoryId,
             },
           },
           tags: {
@@ -54,7 +61,7 @@ class NoteRepo {
     try {
       const notes = await this.prisma.note.findMany({
         where: {
-          creatorId: id,
+          userId: id,
         },
         select: {
           id: true,
@@ -63,7 +70,12 @@ class NoteRepo {
           status: true,
           createdAt: true,
           updatedAt: true,
-          tags: true,
+          directoryId: true,
+          tags: {
+            select: {
+              name: true,
+            },
+          },
         },
 
         orderBy: {
@@ -113,7 +125,7 @@ class NoteRepo {
     }
   }
 
-  async deleteNoteById(id: number): Promise<Note | null> {
+  async deleteNoteById(id: string): Promise<Note | null> {
     try {
       const note = await this.prisma.note.delete({
         where: {

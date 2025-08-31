@@ -23,8 +23,6 @@ class NoteController {
   };
   createNote = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log("carry goat", req.user?.id);
-
       const value = CreateNoteRequestDTO.validate(req.body);
 
       const noteToCreate = {
@@ -74,7 +72,17 @@ class NoteController {
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void> => {};
+  ): Promise<void> => {
+    try {
+      const noteId = req.params.id;
+      const notes = await this.noteService.deleteNote(noteId);
+
+      res.status(200).json(notes);
+      return;
+    } catch (err) {
+      next(err);
+    }
+  };
   updateNote = async (
     req: Request,
     res: Response,

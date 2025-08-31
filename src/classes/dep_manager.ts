@@ -1,9 +1,11 @@
 import { PrismaClient } from "../generated/prisma";
 import UserRepository from "../repositories/user.respository";
 import NoteRepository from "../repositories/note.repository";
+import TagRepository from "../repositories/tag.repository";
 import EmailService from "../modules/email/email.service";
 import UserService from "../modules/account/account.service";
 import AuthService from "../modules/auth/auth.service";
+import TagService from "../modules/tag/tag.service";
 import NoteService from "../modules/note/note.service";
 import cloudinary from "cloudinary";
 import { v2 } from "cloudinary";
@@ -11,27 +13,42 @@ import { IAppConfig } from "../utils/interface";
 import { MailClient, NodemailerClient } from "../config/emailConfig";
 import AuthController from "../api/auth/auth.controller";
 import AccountController from "../api/account/account.controller";
+import TagController from "../api/tag/tag.controller";
 import DirectoryService from "../modules/directory/directory.service";
 import DirectoryController from "../api/directory/directory.controller";
 import DirectoryRepository from "../repositories/directory.repository";
 import NoteController from "../api/note/note.controller";
 import { EmailWorker } from "../queues/email";
-type Repository = UserRepository | NoteRepository | DirectoryRepository;
-type RepositoryKey = "user" | "note" | "directory";
+type Repository =
+  | UserRepository
+  | NoteRepository
+  | DirectoryRepository
+  | TagRepository;
+type RepositoryKey = "user" | "note" | "directory" | "tag";
 type Repositories = Record<RepositoryKey, Repository>;
 
-type Service = UserService | NoteService | EmailService | AuthService | DirectoryService;
-type ServiceKey = "user" | "email" | "auth" | "note" | "directory";
+type Service =
+  | UserService
+  | NoteService
+  | EmailService
+  | AuthService
+  | DirectoryService
+  | TagService;
+type ServiceKey = "user" | "email" | "auth" | "note" | "directory" | "tag";
 type Services = Record<ServiceKey, Service>;
 
 type QueueWorker = EmailWorker;
 type QueueKey = "email";
 type Queues = Record<QueueKey, QueueWorker>;
 
-type Controller = AuthController | AccountController | NoteController | DirectoryController;
-type Controllerkey = "user" | "auth" | "note" | "directory";
+type Controller =
+  | AuthController
+  | AccountController
+  | NoteController
+  | DirectoryController
+  | TagController;
+type Controllerkey = "user" | "auth" | "note" | "directory" | "tag";
 type Controllers = Record<Controllerkey, Controller>;
-// type Controllers =
 export class DependencyManager {
   prisma: PrismaClient | null = null;
   mail: MailClient | null = null;
@@ -106,14 +123,18 @@ export class DependencyManager {
     this.repositories = {
       note: new NoteRepository(this.prisma!),
       user: new UserRepository(this.prisma!),
+      tag: new TagRepository(this.prisma!),
       directory: new DirectoryRepository(this.prisma),
     };
     this.services = {
       auth: new AuthService(this.getRepository<UserRepository>("user")),
+      tag: new TagService(this.getRepository<TagRepository>("tag")),
       note: new NoteService(this.getRepository<NoteRepository>("note")),
       email: new EmailService(this.nodeMailerClient()),
       user: new UserService(this.getRepository<UserRepository>("user")),
-      directory: new DirectoryService(this.getRepository<DirectoryRepository>("directory"))
+      directory: new DirectoryService(
+        this.getRepository<DirectoryRepository>("directory")
+      ),
     };
     this.queueWorker = {
       email: new EmailWorker(this.services.email as EmailService),
@@ -122,7 +143,10 @@ export class DependencyManager {
       auth: new AuthController(this.getService<AuthService>("auth")),
       user: new AccountController(this.getService<UserService>("user")),
       note: new NoteController(this.getService<NoteService>("note")),
-      directory: new DirectoryController(this.getService<DirectoryService>("directory"))
+      tag: new TagController(this.getService<TagService>("tag")),
+      directory: new DirectoryController(
+        this.getService<DirectoryService>("directory")
+      ),
     };
   }
 

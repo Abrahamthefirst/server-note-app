@@ -1,17 +1,17 @@
-import { Note, Directory } from "../generated/prisma";
+import { Directory } from "../generated/prisma";
 import { ConflictError } from "../utils/error";
 import { PrismaClient } from "@prisma/client";
 import { Prisma } from "../generated/prisma";
-interface CreateNoteRepositoryData {
+interface CreateDirectoryRepositoryData {
   name: string;
 }
 interface DirectoryResponse {
   name: string;
-  notes: Note[];
+  notes: Directory[];
 }
 class DirectoryRepository {
   constructor(private prisma: PrismaClient) {}
-  async createDirectory(data: CreateNoteRepositoryData): Promise<Note> {
+  async createDirectory(data: CreateDirectoryRepositoryData): Promise<Directory> {
     try {
       const newDirectory = await this.prisma.directory.create({
         data,
@@ -102,20 +102,29 @@ class DirectoryRepository {
     }
   }
 
-  async deleteDirectoryById(id: number): Promise<Note | null> {
+  async deleteDirectoryById(id: string): Promise<Directory | null> {
     try {
-      const note = await this.prisma.note.delete({
-        where: {
-          id,
-        },
-      });
+      console.log(id, "This is the id");
+      const transaction = await this.prisma.$transaction(
+        async () => {
+          await this.prisma.note.deleteMany({
+            where: { directoryId: id },
+          });
 
-      return note;
+          const directory = await this.prisma.directory.delete({
+            where: { id: id },
+          });
+          return directory;
+        }
+      );
+
+      return transaction;
     } catch (err) {
+      console.log(err, "This might be the error");
       throw err;
     }
   }
-  async getAllDirectories(): Promise<Note[] | null> {
+  async getAllDirectories(): Promise<Directory[] | null> {
     try {
       const notes = await this.prisma.note.findMany();
       return notes;
@@ -123,7 +132,7 @@ class DirectoryRepository {
       throw err;
     }
   }
-  async getDirectoryById(id: number): Promise<Note | null> {
+  async getDirectoryById(id: number): Promise<Directory | null> {
     try {
       const note = await this.prisma.note.findUnique({
         where: {

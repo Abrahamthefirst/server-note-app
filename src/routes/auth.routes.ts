@@ -9,7 +9,7 @@ export function createAuthRouter(authController: AuthController) {
 
   router.post("/login", authController.login);
   router.post("/login/refresh-token", authController.refreshToken);
-
+  router.get("/email/verify-email", authController.verifyEmail);
 
   router.get(
     "/login/google",
@@ -22,16 +22,15 @@ export function createAuthRouter(authController: AuthController) {
     authController.googleAuth
   );
 
-  router.post(
-    "email/request_email_verification",
+  
+  router.get(
+    "/email/request_email_verification/:token",
     authController.emailVerificationLink
   );
-  router.post("/email/verify-email", authController.verifyEmail);
 
   router.post("/forgot-password", authController.forgotPassword);
 
   router.post("/reset-password", authController.resetPassword);
-
 
   router.post("/logout", authController.logout);
   return router;

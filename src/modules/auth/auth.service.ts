@@ -4,8 +4,8 @@ import {
   BasicLoginRequestDTO,
 } from "../../api/auth/dtos/request.dto";
 import bcrypt from "bcryptjs";
-import { emailQueue } from "../../config/queue";
-import { resetPasswordType } from "../../types/utilTypes";
+import { emailQueue } from "../../queues/email";
+import { AuthResetPasswordType } from "../../types/utilTypes";
 import { TokenExpiredError } from "jsonwebtoken";
 import { User } from "../../generated/prisma";
 import {
@@ -14,6 +14,9 @@ import {
   verifyAccessJwt,
   verifyRefreshJwt,
 } from "../../utils/token";
+import { jwtDecode } from "jwt-decode";
+import emailVerification from "../../templates/emailVerification";
+import resetPasswordTemplate from "../../templates/resetPassword";
 import { GoneError, BadRequestError, NotFoundError } from "../../utils/error";
 
 class AuthService {
@@ -29,17 +32,17 @@ class AuthService {
       const user = await this.userRepository.createUser({
         ...userDetails,
         hashed_password,
-      
       });
       const refresh_token = generateRefreshJwt({ user });
       const access_token = generateJWT({ id: user.id });
       const verificationToken = generateJWT({ email: user.email });
+      const link = `http://localhost:3000/auth/email/verify-email?token=${verificationToken}`;
+      const html = emailVerification(user.username, link, "60");
+
       await emailQueue.add("send", {
         subject: "Email Verification",
         to: user.email,
-        username: user.username,
-        link: `http://localhost:3000/auth/email/verification/verify_by_link?token=${verificationToken}`,
-        expiration: "1hr",
+        html,
       });
 
       await this.userRepository.updateUserById({
@@ -48,28 +51,6 @@ class AuthService {
       });
 
       return { ...user, access_token, refresh_token };
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async getEmailVerificationLink(email: string): Promise<boolean> {
-    try {
-      const user = await this.userRepository.getUserByEmail(email);
-
-      if (!user) throw new NotFoundError("Email not found");
-
-      const verificationToken = generateJWT({ email: user.email });
-
-      await emailQueue.add("send", {
-        subject: "Email Verification",
-        to: user.email,
-        username: user.username,
-        link: `http://localhost:3000/auth/email/verification/verify_by_link?token=${verificationToken}`,
-        expiration: "1hr",
-      });
-
-      return true;
     } catch (err) {
       throw err;
     }
@@ -105,6 +86,28 @@ class AuthService {
       const { hashed_password, ...userData } = user;
 
       return { ...userData, access_token, refresh_token };
+    } catch (err) {
+      throw err;
+    }
+  }
+  async getEmailVerificationLink(token: string): Promise<boolean> {
+    try {
+      const { email } = jwtDecode(token) as { email: string };
+      const user = await this.userRepository.getUserByEmail(email);
+
+      if (!user) throw new NotFoundError("Email not found");
+
+      const verificationToken = generateJWT({ email: user.email });
+
+      await emailQueue.add("send", {
+        subject: "Email Verification",
+        to: user.email,
+        username: user.username,
+        link: `http://localhost:3000/auth/email/verification/verify_by_link?token=${verificationToken}`,
+        expiration: "1hr",
+      });
+
+      return true;
     } catch (err) {
       throw err;
     }
@@ -151,9 +154,7 @@ class AuthService {
       return false;
     } catch (err) {
       if (err instanceof TokenExpiredError) {
-        throw new GoneError(
-          "Verification link has expired, request for a new one"
-        );
+        throw new GoneError(token);
       }
       throw err;
     }
@@ -165,12 +166,12 @@ class AuthService {
       if (!user) return false;
 
       const verificationToken = generateJWT({ email: user.email });
+      const link = `http://localhost:5173/reset-password/${verificationToken}`
+      const html = resetPasswordTemplate(user.username, link, "60")
       await emailQueue.add("send", {
         subject: "Password Verification",
         to: user.email,
-        username: user.username,
-        link: `http://localhost:3000/auth/password/reset?token=${verificationToken}`,
-        expiration: "1hr",
+       html
       });
 
       return true;
@@ -179,19 +180,34 @@ class AuthService {
     }
   }
 
-  async resetPassword(data: resetPasswordType): Promise<boolean> {
+  // async resetPassword(data: AuthResetPasswordType): Promise<boolean> {
+  //   try {
+  //     const { oldPassword, newPassword, email } = data;
+  //     let user = (await this.userRepository.getUserByEmail(email)) as User;
+  //     const hashed_password = user.hashed_password as string;
+  //     const passwordVersionCheck = bcrypt.compareSync(
+  //       newPassword,
+  //       hashed_password
+  //     );
+
+  //     if (passwordVersionCheck) return false;
+
+  //     const newHashedPassword = bcrypt.hashSync(newPassword);
+  //     user = { ...user, hashed_password: newHashedPassword };
+
+  //     await this.userRepository.updateUserByEmail(user);
+  //     return true;
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // }
+
+  async resetPassword({password, token}: {password: string, token: string} ): Promise<boolean> {
     try {
-      const { oldPassword, newPassword, email } = data;
-      let user = (await this.userRepository.getUserByEmail(email)) as User;
-      const hashed_password = user.hashed_password as string;
-      const passwordVersionCheck = bcrypt.compareSync(
-        newPassword,
-        hashed_password
-      );
-
-      if (passwordVersionCheck) return false;
-
-      const newHashedPassword = bcrypt.hashSync(newPassword);
+  
+      const decodedToken = jwtDecode(token) as {email: string}
+      let user = (await this.userRepository.getUserByEmail(decodedToken.email)) as User;
+      const newHashedPassword = bcrypt.hashSync(password);
       user = { ...user, hashed_password: newHashedPassword };
 
       await this.userRepository.updateUserByEmail(user);
@@ -200,6 +216,7 @@ class AuthService {
       throw err;
     }
   }
+
 
   async getAccessToken(token: string): Promise<string> {
     try {

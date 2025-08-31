@@ -4,6 +4,7 @@ import { BadRequestError } from "../../../utils/error";
 const CreateNoteSchema = z.strictObject({
   title: z.string("Please enter a valid username"),
   body: z.string("Input a password"),
+  directoryId: z.string("").optional(),
   status: z.boolean("status field is required"),
   tagNames: z.array(z.string()).optional(),
 });

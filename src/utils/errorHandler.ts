@@ -16,12 +16,13 @@ export const errorHandler = (
   let message = "Internal server error";
   let statusCode = 500;
 
+
   if (
     err instanceof ConflictError ||
     err instanceof NotFoundError ||
     err instanceof BadRequestError ||
     err instanceof GoneError ||
-    err instanceof UnauthorizedError ||
+    err instanceof UnauthorizedError || err instanceof
     ForbiddenError
   ) {
     statusCode = err.status;

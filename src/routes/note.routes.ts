@@ -6,7 +6,8 @@ export function createNoteRouter(noteController: NoteController) {
   router.get("/", noteController.getAllNotes);
   router.get("/me", noteController.getAuthUserNotes);
   router.get("/me/:id", noteController.getNoteById);
-  router.post("/me", noteController.createNote);
+  router.delete("/me/:id", noteController.deleteNote);
+  router.post("/", noteController.createNote);
   // router.post("/upload", upload.array("files"), userController.uploadDocuments);
 
 

@@ -51,6 +51,8 @@ export class BasicRegistrationRequestDTO {
         data.country_code?.toUpperCase() as CountryCode
       );
 
+      console.log(validPhoneNumber, "This is the valid phone number result")
+
       if (!phoneNumber || !validPhoneNumber) {
         throw new BadRequestError("Phone number or country code is invalid");
       }

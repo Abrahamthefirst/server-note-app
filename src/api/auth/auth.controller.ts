@@ -4,6 +4,7 @@ import {
   BasicLoginRequestDTO,
   BasicRegistrationRequestDTO,
 } from "./dtos/request.dto";
+import { GoneError } from "../../utils/error";
 class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -66,11 +67,12 @@ class AuthController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const response = await this.authService.getEmailVerificationLink(
-        req.body.email
-      );
+      let token = req.params.token as string;
+      const response = await this.authService.getEmailVerificationLink(token);
       if (response)
-        res.json({ message: "Check your email for a verification link" });
+        res
+          .status(200)
+          .json({ message: "Check your email for a verification link" });
       return;
     } catch (err) {
       next(err);
@@ -83,16 +85,24 @@ class AuthController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const token = req.query.token as string;
+      let token = req.query.token as string;
 
       const response = await this.authService.verifyEmail(token);
+      if (response) {
+        return res.status(302).redirect("http://localhost:5173/");
+      }
 
-      // Come back to put a frontend url
-      if (response) res.redirect("");
-
-      res.redirect("");
+      res.status(302).redirect("www.google.com");
       return;
     } catch (err) {
+      if (err instanceof GoneError) {
+        return res
+          .status(302)
+          .redirect(
+            `http://localhost:5173/email/verification-link/${err.message}`
+          );
+      }
+      console.log("lets verify if it gets here");
       next(err);
     }
   };
@@ -117,12 +127,36 @@ class AuthController {
     }
   };
 
+  // resetPassword = async (
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ): Promise<void> => {
+  //   try {
+  //     const response = await this.authService.resetPassword(req.body);
+
+  //     if (!response) {
+  //       res
+  //         .status(400)
+  //         .json({ message: "Old Password cannot be the same as new Password" });
+  //       return;
+  //     }
+
+  //     res
+  //       .status(200)
+  //       .json({ message: "Password has been updated successfully" });
+  //   } catch (err) {
+  //     next(err);
+  //   }
+  // };
+
   resetPassword = async (
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> => {
     try {
+      
       const response = await this.authService.resetPassword(req.body);
 
       if (!response) {

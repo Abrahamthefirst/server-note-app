@@ -14,22 +14,22 @@ export default function authenticate(
 ) {
   const authHeader = req.headers.authorization;
 
+
   if (authHeader?.startsWith("Bearer ")) {
     try {
       const token = authHeader.split(" ")[1];
 
-      console.log(token, "This might be")
       const decoded = verifyAccessJwt(token) as decoded;
-      console.log(decoded, "What is the decoded")
 
       req.user = { id: decoded.id, ...decoded };
       next();
     } catch (err) {
-      console.log(err, "What is the error")
       if (err instanceof TokenExpiredError) {
         throw new UnauthorizedError("Token expired")
+       
       } else {
         throw new ForbiddenError("Malformed jwt")
+      
       }
     }
   } else {
