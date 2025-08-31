@@ -1,8 +1,8 @@
+"use strict";
 // import cloudinary from "../../config/cloudinary";
 // import { v2 } from "cloudinary";
 // import fs from "node:fs/promises";
 // import { Document } from "../../generated/prisma";
-
 // class uploadService {
 //   constructor(private cloudinary: typeof v2) {
 //     this.cloudinary = cloudinary;
@@ -41,5 +41,4 @@
 //     }
 //   }
 // }
-
 // export default uploadService;
