@@ -81,6 +81,7 @@ class NoteRepo {
                         title: true,
                         body: true,
                         status: true,
+                        userId: true,
                         createdAt: true,
                         updatedAt: true,
                         directoryId: true,

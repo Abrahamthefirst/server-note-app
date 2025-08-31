@@ -22,7 +22,6 @@ const config_1 = __importDefault(require("./config/config"));
 const dep_manager_1 = require("./classes/dep_manager");
 const errorHandler_1 = require("./utils/errorHandler");
 const allRoutes_1 = require("./routes/allRoutes");
-const winston_log_1 = require("./middleware/winston.log");
 dotenv_1.default.config();
 const startApp = (dep_man) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
@@ -33,7 +32,7 @@ const startApp = (dep_man) => __awaiter(void 0, void 0, void 0, function* () {
     app.use((0, cors_1.default)(dep_man.setUpCors()));
     app.use(passport_1.default.initialize());
     (0, passport_2.googleAuthStrategy)();
-    app.use(winston_log_1.logRequests);
+    // app.use(logRequests)
     (0, allRoutes_1.registerAllApplicationRoutes)(app, dep_man);
     app.use((req, res, next) => {
         req.app_config = dep_man.getConfig();

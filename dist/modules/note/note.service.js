@@ -25,7 +25,7 @@ class NoteService {
     getNoteById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const note = yield this.noteRepository.getNoteById(Number(id));
+                const note = yield this.noteRepository.getNoteById(id);
                 return note;
             }
             catch (err) {

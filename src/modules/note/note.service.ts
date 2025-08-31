@@ -20,7 +20,7 @@ class NoteService {
   };
   async getNoteById(id: string): Promise<Note | null> {
     try {
-      const note = await this.noteRepository.getNoteById(Number(id));
+      const note = await this.noteRepository.getNoteById(id);
       return note;
     } catch (err) {
       throw err;
