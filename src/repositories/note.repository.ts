@@ -1,5 +1,6 @@
 import { Note } from "../generated/prisma";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../generated/prisma";
+
 
 interface CreateNoteRepositoryData {
   title: string;
@@ -68,6 +69,7 @@ class NoteRepo {
           title: true,
           body: true,
           status: true,
+          userId: true,
           createdAt: true,
           updatedAt: true,
           directoryId: true,
@@ -96,7 +98,7 @@ class NoteRepo {
       throw err;
     }
   }
-  async getNoteById(id: number): Promise<Note | null> {
+  async getNoteById(id: string): Promise<Note | null> {
     try {
       const note = await this.prisma.note.findUnique({
         where: {

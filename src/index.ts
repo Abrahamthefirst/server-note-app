@@ -39,7 +39,7 @@ const startApp = async (dep_man: DependencyManager) => {
 
  
   googleAuthStrategy();
-  app.use(logRequests)
+  // app.use(logRequests)
   registerAllApplicationRoutes(app, dep_man);
   app.use((req, res, next) => {
     req.app_config = dep_man.getConfig();
