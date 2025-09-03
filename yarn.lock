@@ -674,10 +674,10 @@
   resolved "https://registry.yarnpkg.com/@pkgr/core/-/core-0.2.7.tgz#eb5014dfd0b03e7f3ba2eeeff506eed89b028058"
   integrity sha512-YLT9Zo3oNPJoBjBc4q8G2mjU4tqIbf5CEOORbUUr48dCD9q3umJ3IPlVqOqDakPfd2HuwccBaqlGhN4Gmr5OWg==
 
-"@prisma/client@^6.8.2":
-  version "6.8.2"
-  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-6.8.2.tgz#f0af46643604cd38341f285483edc3c3ae7e6651"
-  integrity sha512-5II+vbyzv4si6Yunwgkj0qT/iY0zyspttoDrL3R4BYgLdp42/d2C8xdi9vqkrYtKt9H32oFIukvyw3Koz5JoDg==
+"@prisma/client@^6.7.0":
+  version "6.15.0"
+  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-6.15.0.tgz#c4166aa8492878c842e63c515853d7a4125e6168"
+  integrity sha512-wR2LXUbOH4cL/WToatI/Y2c7uzni76oNFND7+23ypLllBmIS8e3ZHhO+nud9iXSXKFt1SoM3fTZvHawg63emZw==
 
 "@prisma/config@6.15.0":
   version "6.15.0"
@@ -3293,7 +3293,7 @@ pretty-format@30.0.2, pretty-format@^30.0.0:
     ansi-styles "^5.2.0"
     react-is "^18.3.1"
 
-prisma@^6.15.0:
+prisma@^6.7.0:
   version "6.15.0"
   resolved "https://registry.yarnpkg.com/prisma/-/prisma-6.15.0.tgz#198f95a4468aba8f3c95b58bf3400f65daeb8942"
   integrity sha512-E6RCgOt+kUVtjtZgLQDBJ6md2tDItLJNExwI0XJeBc1FKL+Vwb+ovxXxuok9r8oBgsOXBA33fGDuE/0qDdCWqQ==
