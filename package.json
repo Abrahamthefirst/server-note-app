@@ -7,6 +7,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
+    "postinstall": "yarn prisma generate",
     "watch": "tsc --watch"
   },
   "dependencies": {
