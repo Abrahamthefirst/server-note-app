@@ -4,9 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-  "build": "yarn tsc && yarn copyfiles --up 1 \"src/generated/**/*\" dist",
-  "start": "node dist/index.js",
-  "deploy": "yarn prisma db push --accept-data-loss && yarn build",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "deploy": "yarn prisma db push --accept-data-loss && yarn build",
     "dev": "nodemon src/index.ts",
     "postinstall": "yarn prisma generate",
     "watch": "tsc --watch"

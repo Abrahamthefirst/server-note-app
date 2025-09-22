@@ -92,20 +92,28 @@ class AuthService {
   }
   async getEmailVerificationLink(token: string): Promise<boolean> {
     try {
-      const { email } = jwtDecode(token) as { email: string };
-      const user = await this.userRepository.getUserByEmail(email);
+      const { email, id } = jwtDecode(token) as { email?: string; id?: string };
+      console.log(email, id);
+      let user;
+      if (email) {
+        user = await this.userRepository.getUserByEmail(email);
+      }
+
+      if (id) user = await this.userRepository.getUserById(id);
 
       if (!user) throw new NotFoundError("Email not found");
 
       const verificationToken = generateJWT({ email: user.email });
 
+      const link = `http://localhost:3000/auth/email/verify-email?token=${verificationToken}`;
+      const html = emailVerification(user.username, link, "60");
+
       await emailQueue.add("send", {
         subject: "Email Verification",
         to: user.email,
-        username: user.username,
-        link: `http://localhost:3000/auth/email/verification/verify_by_link?token=${verificationToken}`,
-        expiration: "1hr",
+        html,
       });
+
 
       return true;
     } catch (err) {
@@ -166,12 +174,12 @@ class AuthService {
       if (!user) return false;
 
       const verificationToken = generateJWT({ email: user.email });
-      const link = `http://localhost:5173/reset-password/${verificationToken}`
-      const html = resetPasswordTemplate(user.username, link, "60")
+      const link = `http://localhost:5173/reset-password/${verificationToken}`;
+      const html = resetPasswordTemplate(user.username, link, "60");
       await emailQueue.add("send", {
         subject: "Password Verification",
         to: user.email,
-       html
+        html,
       });
 
       return true;
@@ -202,11 +210,18 @@ class AuthService {
   //   }
   // }
 
-  async resetPassword({password, token}: {password: string, token: string} ): Promise<boolean> {
+  async resetPassword({
+    password,
+    token,
+  }: {
+    password: string;
+    token: string;
+  }): Promise<boolean> {
     try {
-  
-      const decodedToken = jwtDecode(token) as {email: string}
-      let user = (await this.userRepository.getUserByEmail(decodedToken.email)) as User;
+      const decodedToken = jwtDecode(token) as { email: string };
+      let user = (await this.userRepository.getUserByEmail(
+        decodedToken.email
+      )) as User;
       const newHashedPassword = bcrypt.hashSync(password);
       user = { ...user, hashed_password: newHashedPassword };
 
@@ -216,7 +231,6 @@ class AuthService {
       throw err;
     }
   }
-
 
   async getAccessToken(token: string): Promise<string> {
     try {
@@ -237,7 +251,7 @@ class AuthService {
 
   async logoutUser(id: string): Promise<boolean> {
     try {
-      const user = await this.userRepository.getUserById(Number(id));
+      const user = await this.userRepository.getUserById(id);
 
       if (!user) return false;
 

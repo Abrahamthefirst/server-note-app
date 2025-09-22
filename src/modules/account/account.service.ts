@@ -6,7 +6,7 @@ class AccountService {
   ) {}
   async getUserById(id: string): Promise<User | null> {
     try {
-      const user = await this.userRepository.getUserById(Number(id));
+      const user = await this.userRepository.getUserById(id);
       return user;
     } catch (err) {
       throw err;
@@ -15,7 +15,7 @@ class AccountService {
 
   async getAllUsers(id: string): Promise<User | null> {
     try {
-      const user = await this.userRepository.getUserById(Number(id));
+      const user = await this.userRepository.getUserById(id);
       return user;
     } catch (err) {
       throw err;
