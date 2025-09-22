@@ -7,7 +7,7 @@ import bcrypt from "bcryptjs";
 import { emailQueue } from "../../queues/email";
 import { AuthResetPasswordType } from "../../types/utilTypes";
 import { TokenExpiredError } from "jsonwebtoken";
-import { User } from "../../generated/prisma";
+import { User } from "@prisma/client";
 import {
   generateJWT,
   generateRefreshJwt,

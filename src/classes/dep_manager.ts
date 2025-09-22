@@ -1,4 +1,4 @@
-import { PrismaClient } from "../generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import UserRepository from "../repositories/user.respository";
 import NoteRepository from "../repositories/note.repository";
 import TagRepository from "../repositories/tag.repository";
@@ -124,7 +124,7 @@ export class DependencyManager {
       note: new NoteRepository(this.prisma!),
       user: new UserRepository(this.prisma!),
       tag: new TagRepository(this.prisma!),
-      directory: new DirectoryRepository(this.prisma),
+      directory: new DirectoryRepository(this.prisma!),
     };
     this.services = {
       auth: new AuthService(this.getRepository<UserRepository>("user")),

@@ -1,17 +1,22 @@
-import { Directory } from "../generated/prisma";
 import { ConflictError } from "../utils/error";
-import { PrismaClient } from "@prisma/client";
-import { Prisma } from "../generated/prisma";
+import { PrismaClient, Directory, Prisma, Note } from "@prisma/client";
 interface CreateDirectoryRepositoryData {
   name: string;
 }
 interface DirectoryResponse {
+  id: string;
   name: string;
-  notes: Directory[];
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+  parentId: string | null;
+  notes: Note[];
 }
 class DirectoryRepository {
   constructor(private prisma: PrismaClient) {}
-  async createDirectory(data: CreateDirectoryRepositoryData): Promise<Directory> {
+  async createDirectory(
+    data: CreateDirectoryRepositoryData
+  ): Promise<Directory> {
     try {
       const newDirectory = await this.prisma.directory.create({
         data,
@@ -26,7 +31,7 @@ class DirectoryRepository {
       throw err;
     }
   }
-  async getUserDirectories(userId: string): Promise<Directory> {
+  async getUserDirectories(userId: string): Promise<Directory[]> {
     try {
       const directorites = await this.prisma.directory.findMany({
         where: {
@@ -43,7 +48,7 @@ class DirectoryRepository {
     id: string
   ): Promise<DirectoryResponse | null> {
     try {
-      const notes = await this.prisma.directory.findMany({
+      const directory = await this.prisma.directory.findUnique({
         where: {
           id,
         },
@@ -51,7 +56,7 @@ class DirectoryRepository {
           notes: true,
         },
       });
-      return notes;
+      return directory;
     } catch (err) {
       throw err;
     }
@@ -72,7 +77,7 @@ class DirectoryRepository {
         where: { id: currentParentId },
         select: { parentId: true },
       });
-      currentParentId = parent?.parentId || null;
+      currentParentId = parent?.parentId || null as unknown as string
     }
     return false;
   }
@@ -105,18 +110,16 @@ class DirectoryRepository {
   async deleteDirectoryById(id: string): Promise<Directory | null> {
     try {
       console.log(id, "This is the id");
-      const transaction = await this.prisma.$transaction(
-        async () => {
-          await this.prisma.note.deleteMany({
-            where: { directoryId: id },
-          });
+      const transaction = await this.prisma.$transaction(async () => {
+        await this.prisma.note.deleteMany({
+          where: { directoryId: id },
+        });
 
-          const directory = await this.prisma.directory.delete({
-            where: { id: id },
-          });
-          return directory;
-        }
-      );
+        const directory = await this.prisma.directory.delete({
+          where: { id: id },
+        });
+        return directory;
+      });
 
       return transaction;
     } catch (err) {
@@ -126,15 +129,15 @@ class DirectoryRepository {
   }
   async getAllDirectories(): Promise<Directory[] | null> {
     try {
-      const notes = await this.prisma.note.findMany();
+      const notes = await this.prisma.directory.findMany();
       return notes;
     } catch (err) {
       throw err;
     }
   }
-  async getDirectoryById(id: number): Promise<Directory | null> {
+  async getDirectoryById(id: string): Promise<Directory | null> {
     try {
-      const note = await this.prisma.note.findUnique({
+      const note = await this.prisma.directory.findUnique({
         where: {
           id,
         },

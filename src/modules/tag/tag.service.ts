@@ -1,9 +1,8 @@
 import TagRepository from "../../repositories/tag.repository";
-import { Tag } from "../../generated/prisma";
 
 class TagService {
   constructor(private tagRespository: TagRepository) {}
-  createTags = async (dto: string[], userId: string): Promise<Tag[] | null> => {
+  createTags = async (dto: string[], userId: string) => {
     try {
       const tag = await this.tagRespository.createTag(dto, userId);
       return tag;
@@ -50,7 +49,7 @@ class TagService {
 
   async deleteTagById(id: string): Promise<{ id: string } | null> {
     try {
-      const deletedNote = await this.tagRespository.deleteTagById(id);
+      const deletedNote = await this.tagRespository.deleteTagById(Number(id));
       return { id: String(deletedNote?.id) };
     } catch (err) {
       throw err;

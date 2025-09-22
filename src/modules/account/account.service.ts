@@ -1,10 +1,10 @@
 import UserRepository from "../../repositories/user.respository";
-import { User } from "../../generated/prisma";
+import { User } from "@prisma/client";
 class AccountService {
   constructor(
     private userRepository: UserRepository,
   ) {}
-  async getUserById(id: string): Promise<User | null> {
+  async getUserById(id: string) {
     try {
       const user = await this.userRepository.getUserById(id);
       return user;
@@ -13,7 +13,7 @@ class AccountService {
     }
   }
 
-  async getAllUsers(id: string): Promise<User | null> {
+  async getAllUsers(id: string) {
     try {
       const user = await this.userRepository.getUserById(id);
       return user;
@@ -22,7 +22,7 @@ class AccountService {
     }
   }
 
-  async updateUser(user: Partial<User>): Promise<User | null> {
+  async updateUser(user: Partial<User>) {
     try {
       const updatedUser = await this.userRepository.updateUserById(user);
       return updatedUser;
@@ -31,9 +31,9 @@ class AccountService {
     }
   }
 
-  async deleteUser(id: string): Promise<{ id: string } | null> {
+  async deleteUser(id: string) {
     try {
-      const updatedUser = await this.userRepository.deleteUserById(Number(id));
+      const updatedUser = await this.userRepository.deleteUserById(id);
       return { id: String(updatedUser?.id) };
     } catch (err) {
       throw err;

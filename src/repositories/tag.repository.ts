@@ -1,17 +1,16 @@
-import { Tag } from "../generated/prisma";
 import { ConflictError } from "../utils/error";
-import { PrismaClient } from "@prisma/client";
-import { Prisma } from "../generated/prisma";
+import { PrismaClient, Tag, Prisma} from "@prisma/client";
 
 class TagRepository {
   constructor(private prisma: PrismaClient) {}
   async createTag(data: string[], userId: string): Promise<Tag[]> {
     try {
+      const tagData = data.map((tagName) => ({
+        name: tagName,
+        userId: userId,
+      }));
       const newTags = await this.prisma.tag.createManyAndReturn({
-        data,
-        where: {
-          id: userId,
-        },
+        data: tagData,
       });
       return newTags;
     } catch (err) {
@@ -23,7 +22,7 @@ class TagRepository {
       throw err;
     }
   }
-  async getUserTags(userId: string): Promise<Tag> {
+  async getUserTags(userId: string): Promise<Tag[]> {
     try {
       const tags = await this.prisma.tag.findMany({
         where: {
@@ -36,7 +35,7 @@ class TagRepository {
     }
   }
 
-  async updateTagById(tagId: string, data: Partial<Tag>): Promise<Tag | null> {
+  async updateTagById(tagId: number, data: Partial<Tag>): Promise<Tag | null> {
     try {
       const updatedTag = await this.prisma.tag.update({
         where: {
@@ -51,7 +50,7 @@ class TagRepository {
     }
   }
 
-  async deleteTagById(id: string): Promise<Tag | null> {
+  async deleteTagById(id: number): Promise<Tag | null> {
     try {
       const tag = await this.prisma.tag.delete({
         where: { id },
@@ -63,26 +62,7 @@ class TagRepository {
       throw err;
     }
   }
-  async getAllDirectories(): Promise<Tag[] | null> {
-    try {
-      const notes = await this.prisma.note.findMany();
-      return notes;
-    } catch (err) {
-      throw err;
-    }
-  }
-  async getDirectoryById(id: number): Promise<Tag | null> {
-    try {
-      const note = await this.prisma.note.findUnique({
-        where: {
-          id,
-        },
-      });
-      return note;
-    } catch (err) {
-      throw err;
-    }
-  }
+
 }
 
 export default TagRepository;

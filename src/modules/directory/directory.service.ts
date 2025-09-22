@@ -1,5 +1,5 @@
 import DirectoryRepository from "../../repositories/directory.repository";
-import { Directory } from "../../generated/prisma";
+import { Directory } from "@prisma/client";
 interface CreateUserDirectoryType {
   userId: string;
   name: string;

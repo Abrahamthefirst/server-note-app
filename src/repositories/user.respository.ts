@@ -1,7 +1,6 @@
-import { User } from "../generated/prisma";
-import { Prisma } from "../generated/prisma";
+
 import { ConflictError } from "../utils/error";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User, Prisma } from "@prisma/client";
 class UserRepo {
   constructor(private prisma: PrismaClient) {}
   async createUser(
@@ -34,18 +33,18 @@ class UserRepo {
     }
   }
 
-  async getUserByGoogleId(google_id: string): Promise<User | null> {
-    try {
-      const userData = await this.prisma.user.findUnique({
-        where: {
-          google_id,
-        },
-      });
-      return userData;
-    } catch (err) {
-      throw err;
-    }
-  }
+  // async getUserByGoogleId(google_id: string): Promise<User | null> {
+  //   try {
+  //     const userData = await this.prisma.user.findUnique({
+  //       where: {
+  //         google_id,
+  //       },
+  //     });
+  //     return userData;
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // }
 
   async getUserById(id: string): Promise<User | null> {
     try {
@@ -92,7 +91,7 @@ class UserRepo {
       throw err;
     }
   }
-  async deleteUserById(id: number): Promise<User | null> {
+  async deleteUserById(id: string): Promise<User | null> {
     try {
       const user = await this.prisma.user.delete({
         where: {

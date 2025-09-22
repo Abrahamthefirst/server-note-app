@@ -1,5 +1,4 @@
 import NoteRepository from "../../repositories/note.repository";
-import { Note } from "../../generated/prisma";
 interface CreateNoteServiceData {
   title: string;
   body: string;
@@ -10,7 +9,7 @@ interface CreateNoteServiceData {
 }
 class NoteService {
   constructor(private noteRepository: NoteRepository) {}
-  createNote = async (dto: CreateNoteServiceData): Promise<Note | null> => {
+  createNote = async (dto: CreateNoteServiceData)  => {
     try {
       const note = await this.noteRepository.createNote(dto);
       return note;
@@ -18,7 +17,7 @@ class NoteService {
       throw err;
     }
   };
-  async getNoteById(id: string): Promise<Note | null> {
+  async getNoteById(id: string) {
     try {
       const note = await this.noteRepository.getNoteById(id);
       return note;
@@ -27,7 +26,7 @@ class NoteService {
     }
   }
 
-  async getUserNotes(id: string): Promise<Note[] | null> {
+  async getUserNotes(id: string) {
     try {
       const notes = await this.noteRepository.getNotesByUserId(id);
       return notes;
@@ -35,7 +34,7 @@ class NoteService {
       throw err;
     }
   }
-  async getAllNotes(): Promise<Note[] | null> {
+  async getAllNotes() {
     try {
       const notes = await this.noteRepository.getAllNotes();
       return notes;
@@ -44,7 +43,7 @@ class NoteService {
     }
   }
 
-  async updateNote(note: Partial<Note>): Promise<Note | null> {
+  async updateNote(note: Partial<CreateNoteServiceData>){
     try {
       const updatedNote = await this.noteRepository.updateNoteById(note);
       return updatedNote;
@@ -53,7 +52,7 @@ class NoteService {
     }
   }
 
-  async deleteNote(id: string): Promise<{ id: string } | null> {
+  async deleteNote(id: string) {
     try {
 
       const deletedNote = await this.noteRepository.deleteNoteById(id);

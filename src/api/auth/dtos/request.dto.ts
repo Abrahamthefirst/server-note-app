@@ -1,6 +1,6 @@
 import * as z from "zod/v4";
 import { BadRequestError } from "../../../utils/error";
-import { Role } from "../../../generated/prisma";
+import { Role } from "@prisma/client";
 import {
   parsePhoneNumberFromString,
   isValidPhoneNumber,

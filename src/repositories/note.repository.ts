@@ -1,5 +1,5 @@
-import { Note } from "../generated/prisma";
-import { PrismaClient } from "../generated/prisma";
+
+import { PrismaClient, Note } from "@prisma/client";
 
 
 interface CreateNoteRepositoryData {
