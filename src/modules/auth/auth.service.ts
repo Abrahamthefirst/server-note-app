@@ -20,6 +20,7 @@ import resetPasswordTemplate from "../../templates/resetPassword";
 import { GoneError, BadRequestError, NotFoundError } from "../../utils/error";
 
 class AuthService {
+  serverUrl: string = process.env.SERVER_URL || "http://localhost:3000"
   constructor(private userRepository: UserRepo) {}
 
   async registerUser(
@@ -36,7 +37,7 @@ class AuthService {
       const refresh_token = generateRefreshJwt({ user });
       const access_token = generateJWT({ id: user.id });
       const verificationToken = generateJWT({ email: user.email });
-      const link = `http://localhost:3000/auth/email/verify-email?token=${verificationToken}`;
+      const link = `${this.serverUrl}/auth/email/verify-email?token=${verificationToken}`;
       const html = emailVerification(user.username, link, "60");
 
       await emailQueue.add("send", {
@@ -105,7 +106,7 @@ class AuthService {
 
       const verificationToken = generateJWT({ email: user.email });
 
-      const link = `http://localhost:3000/auth/email/verify-email?token=${verificationToken}`;
+      const link = `${this.serverUrl}/auth/email/verify-email?token=${verificationToken}`;
       const html = emailVerification(user.username, link, "60");
 
       await emailQueue.add("send", {
