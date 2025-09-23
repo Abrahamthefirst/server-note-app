@@ -75,8 +75,11 @@ export class DependencyManager {
         callback: (err: Error | null, allow?: boolean) => void
       ) {
         if ((origin && whitelist.indexOf(origin) !== -1) || !origin) {
+
+          console.log("This is good", origin)
           callback(null, true);
         } else {
+          console.log("This is error", origin)
           callback(new Error("Not allowed by CORS"));
         }
       },
