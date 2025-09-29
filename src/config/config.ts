@@ -24,7 +24,7 @@ const getDefaultConfig = () => {
     whitelist: [
       "http://localhost:5173",
       "https://client-note-app.onrender.com",
-      "https://note-app-ts-optimization.vercel.app/",
+      "https://note-app-ts-optimization.vercel.app",
     ]!,
     googleAuth: {
       clientID: process.env.GOOGLE_CLIENT_ID!,

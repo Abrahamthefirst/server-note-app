@@ -38,7 +38,6 @@ const startApp = async (dep_man: DependencyManager) => {
   app.use(passport.initialize());
 
   googleAuthStrategy();
-  console.log(process.env.REDIS_HOST, process.env.REDIS_PORT, "This is the redis host and this is the redis port");
   // app.use(logRequests)
   registerAllApplicationRoutes(app, dep_man);
   app.use((req, res, next) => {
