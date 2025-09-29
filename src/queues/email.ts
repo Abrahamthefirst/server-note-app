@@ -3,11 +3,8 @@ import { Worker, Queue } from "bullmq";
 import EmailService from "../modules/email/email.service";
 import IoRedis from "ioredis";
 
-const connection = new IoRedis({
-  host: process.env.REDIS_HOST,
-  port: process.env.REDIS_PORT
-    ? parseInt(process.env.REDIS_PORT, 10)
-    : undefined,
+const connection = new IoRedis(process.env.REDIS_URL as string, {
+
   maxRetriesPerRequest: null,
 });
 
