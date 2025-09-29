@@ -20,7 +20,7 @@ import resetPasswordTemplate from "../../templates/resetPassword";
 import { GoneError, BadRequestError, NotFoundError } from "../../utils/error";
 
 class AuthService {
-  serverUrl: string = process.env.SERVER_URL || "http://localhost:3000"
+  serverUrl: string = process.env.SERVER_URL || "http://localhost:3000";
   constructor(private userRepository: UserRepo) {}
 
   async registerUser(
@@ -45,6 +45,8 @@ class AuthService {
         to: user.email,
         html,
       });
+
+      console.log("Email has been added to the queue")
 
       await this.userRepository.updateUserById({
         id: user.id,
@@ -114,7 +116,6 @@ class AuthService {
         to: user.email,
         html,
       });
-
 
       return true;
     } catch (err) {

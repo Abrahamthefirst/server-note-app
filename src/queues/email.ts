@@ -22,6 +22,8 @@ export class EmailWorker {
       async (job) => {
         try {
           const { subject, to, html } = job.data;
+
+          console.log(job.data, "This is the job data")
           await this.emailService.sendMail(
             subject,
             to,
@@ -29,7 +31,8 @@ export class EmailWorker {
             "Abraham <abrahamprogramming5@gmail.com>"
           );
         } catch (err) {
-          console.log(err);
+          
+          console.log(err, "Worker err");
         }
       },
       { connection }
