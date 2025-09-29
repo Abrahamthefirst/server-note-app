@@ -23,7 +23,6 @@ export class EmailWorker {
         try {
           const { subject, to, html } = job.data;
 
-          console.log(job.data, "This is the job data")
           await this.emailService.sendMail(
             subject,
             to,

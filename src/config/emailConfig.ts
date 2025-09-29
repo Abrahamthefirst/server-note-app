@@ -13,8 +13,8 @@ export class NodemailerClient implements MailClient {
   constructor(private user: string, private pass: string) {
     this.transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
-      port: 465, 
-      secure: true, 
+      port: 587,
+      secure: false,
       service: "gmail",
       auth: {
         user: this.user,

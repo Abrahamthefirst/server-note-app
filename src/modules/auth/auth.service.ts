@@ -46,7 +46,6 @@ class AuthService {
         html,
       });
 
-      console.log("Email has been added to the queue")
 
       await this.userRepository.updateUserById({
         id: user.id,
