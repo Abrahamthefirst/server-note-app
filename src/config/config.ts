@@ -21,7 +21,11 @@ const getDefaultConfig = () => {
       dialect: "postgres",
       url: "",
     },
-    whitelist: ["http://localhost:5173", "https://client-note-app.onrender.com"]!,
+    whitelist: [
+      "http://localhost:5173",
+      "https://client-note-app.onrender.com",
+      "https://note-app-ts-optimization.vercel.app/",
+    ]!,
     googleAuth: {
       clientID: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
