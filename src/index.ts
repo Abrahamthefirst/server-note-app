@@ -11,6 +11,7 @@ import { errorHandler } from "./utils/errorHandler";
 import { IAppConfig } from "./utils/interface";
 import { registerAllApplicationRoutes } from "./routes/allRoutes";
 import { logRequests } from "./middleware/winston.log";
+
 dotenv.config();
 
 declare module "express-serve-static-core" {
